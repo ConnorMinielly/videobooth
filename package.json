@@ -1,0 +1,20 @@
+{
+  "name": "videobooth",
+  "version": "1.0.0",
+  "description": "Video Booth project for the Georgian College Changemakers (round 2) ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Connor Minielly",
+  "license": "MIT",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2",
+    "johnny-five": "^1.0.0",
+    "mic": "^2.1.2",
+    "pi-camera": "^1.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
