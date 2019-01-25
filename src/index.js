@@ -2,8 +2,9 @@
 const Cylon = require('cylon');
 const shell = require('shelljs');
 
+shell.cd(__dirname);
 shell.exec(
-  '../../raspidmx/pngview/pngview -b 0 -l 3 -t 1000 overlay.png',
+  './raspidmx/pngview/pngview -b 0 -l 3 -t 1000 overlay.png',
   {},
   (code, stout, sterr) => {
     sterr && console.log(`Execution Error: ${sterr}`);

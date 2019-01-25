@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js",
+    "build-raspidmx": "node src/buildScript.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Connor Minielly",
