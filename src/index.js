@@ -1,18 +1,25 @@
-const five = require('johnny-five');
+// Alternative to johnny-five, I could use Cylon.js instead.
+const Cylon = require('cylon');
+const shell = require('shelljs');
 
-// For some god forsaken reason you can only install raspi-io while on ARM architecture and I don't
-// want to write all this on a Pi so the following needs to be un-commented once setup on the Pi its gonna run on.
-// obviously this means I need to remember to 'yarn add raspi-io' as well.
+shell.exec(
+  './pngview -b 0 -l 3 -t 1000 overlay.png',
+  {},
+  (code, stout, sterr) => {
+    sterr && console.log(`Execution Error: ${sterr}`);
+  },
+);
 
-// const Raspi = require("raspi-io");
-// const board = new five.Board({
-//   io: new Raspi()
-// });
+// Cylon.robot({
+//   connections: {
+//     raspi: { adaptor: 'raspi' },
+//   },
 
-const board = new five.Board();
+//   devices: {
+//     led: { driver: 'led', pin: 11 },
+//   },
 
-board.on('ready', () => {
-  // set up an led attached to pin 13
-  let led = new five.Led(13);
-  led.blink(500);
-});
+//   work: my => {
+//     every((1).second(), my.led.toggle);
+//   },
+// }).start();
