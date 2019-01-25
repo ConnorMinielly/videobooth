@@ -4,6 +4,7 @@
   "description": "Video Booth project for the Georgian College Changemakers (round 2) ",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Connor Minielly",
@@ -13,7 +14,8 @@
     "cylon-raspi": "^0.20.1",
     "fluent-ffmpeg": "^2.1.2",
     "mic": "^2.1.2",
-    "pi-camera": "^1.2.1"
+    "pi-camera": "^1.2.1",
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"

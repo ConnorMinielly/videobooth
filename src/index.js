@@ -1,16 +1,25 @@
-// Alternative to johnny-five I could use Cylon.js instead.
+// Alternative to johnny-five, I could use Cylon.js instead.
 const Cylon = require('cylon');
+const shell = require('shelljs');
 
-Cylon.robot({
-  connections: {
-    raspi: { adaptor: 'raspi' },
+shell.exec(
+  './pngview -b 0 -l 3 -t 1000 overlay.png',
+  {},
+  (code, stout, sterr) => {
+    sterr && console.log(`Execution Error: ${sterr}`);
   },
+);
 
-  devices: {
-    led: { driver: 'led', pin: 11 },
-  },
+// Cylon.robot({
+//   connections: {
+//     raspi: { adaptor: 'raspi' },
+//   },
 
-  work: my => {
-    every((1).second(), my.led.toggle);
-  },
-}).start();
+//   devices: {
+//     led: { driver: 'led', pin: 11 },
+//   },
+
+//   work: my => {
+//     every((1).second(), my.led.toggle);
+//   },
+// }).start();
