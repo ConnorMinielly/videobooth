@@ -11,8 +11,10 @@
   "author": "Connor Minielly",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.6.1",
     "cylon": "^1.3.0",
     "cylon-raspi": "^0.20.1",
+    "drivelist": "^7.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "mic": "^2.1.2",
     "pi-camera": "^1.2.1",
