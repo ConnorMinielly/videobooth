@@ -65,6 +65,7 @@ cylon
               },
               (callback) => {
                 const camProcess = fork('functions/cam.js');
+                console.log(`PASSING CAM FILE PATH OF: ${filepath}`);
                 camProcess.send({ filepath, duration });
                 camProcess.on('message', ({ err, result }) => {
                   callback(err, result);
@@ -83,15 +84,19 @@ cylon
               else {
                 console.log('Beginning Composite Process...');
                 // try to composite the video and audio into the same file.
-                await ffmpeg
-                  .input(`${filepath}.h264`)
-                  .input(`${filepath}.wav`)
-                  .output(`${filepath}mp4`)
-                  .on('end', () => console.log('Audio + Video Compositing Finished'))
-                  .run();
-                console.log('Removing Source Audio (wav) + Video (h264) Files');
-                fs.unlink(`${filepath}.h264`);
-                fs.unlink(`${filepath}.wav`);
+                try {
+                  await ffmpeg
+                    .input(`${filepath}.h264`)
+                    .input(`${filepath}.wav`)
+                    .output(`${filepath}.mp4`)
+                    .on('end', () => console.log('Audio + Video Compositing Finished'))
+                    .run();
+                  console.log('Removing Source Audio (wav) + Video (h264) Files');
+                  fs.unlink(`${filepath}.h264`);
+                  fs.unlink(`${filepath}.wav`);
+                } catch (error) {
+                  console.log(`MERGE FAILED: ${error}`);
+                }
               }
               State.onAir = false; // We're all done recording, for better or worse.
             },
