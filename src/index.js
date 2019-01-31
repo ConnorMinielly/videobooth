@@ -1,31 +1,12 @@
 const cylon = require('cylon');
 const shell = require('shelljs');
-const async = require('async');
-const Picam = require('pi-camera');
-const Micro = require('mic');
+const parallel = require('run-parallel');
 const Fffmpeg = require('fluent-ffmpeg');
+const { fork } = require('child_process');
 const fs = require('fs');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
-
-// Init cam object for recording video
-const cam = new Picam({
-  mode: 'video',
-  output: 'video.h264', // Temporary name
-  width: 1920,
-  height: 1080,
-  timeout: duration, // Record for 5 seconds
-  nopreview: false, // show preview
-});
-
-// Init mic object for recording audio
-const mic = new Micro({
-  rate: '1600',
-  channels: '1',
-  device: 'hw:1,0',
-  filetype: 'wav',
-});
 
 // Init ffmpeg object to handle video and audio merge/conversion.
 const ffmpeg = new Fffmpeg();
@@ -35,30 +16,8 @@ const State = {
   onAir: false, // Are we recording?
 };
 
-// fire up the PiCamera and record video to the designated filepath.
-const startPiCam = (filepath, callback) => {
-  cam.set('output', `${filepath}.h264`);
-  cam.record(() => callback());
-};
-
-// fire up the mic and record audio to the designated filepath.
-const startPiMic = async (filepath, callback) => {
-  const audioInStream = mic.getAudioStream();
-  const fileOutStream = fs.WriteStream(`${filepath}.wav`);
-  // Add event listener that starts timeout counter as soon as the
-  // start() function is successfully called
-  audioInStream.on('startComplete', () => {
-    setTimeout(() => {
-      mic.stop();
-    }, duration);
-  });
-  audioInStream.pipe(fileOutStream);
-  await mic.start();
-  callback();
-};
-
 // render a png over the preview
-const renderOverlay = () => {
+const renderOverlay = (callback) => {
   shell.cd(__dirname);
   shell.exec(
     `./raspidmx/pngview/pngview -b 0 -l 3 -t ${duration} -n overlay.png`,
@@ -71,6 +30,7 @@ const renderOverlay = () => {
       }
     },
   );
+  callback();
 };
 
 // Spin up cylon connection to RPI to manage GPIO button triggers
@@ -97,8 +57,26 @@ cylon
           console.log(`Initializing Recording Process For ${stamp}`);
           // if this isn't parallel enough mic and cam functions can be separated into
           // separate module files and forked via subprocess
-          async.parallel(
-            [renderOverlay(), startPiCam(filepath), startPiMic(filepath)],
+          parallel(
+            [
+              (callback) => {
+                renderOverlay(callback);
+              },
+              (callback) => {
+                const camProcess = fork('functions/cam.js');
+                camProcess.send({ filepath, duration });
+                camProcess.on('message', ({ err, result }) => {
+                  callback(err, result);
+                });
+              },
+              (callback) => {
+                const micProcess = fork('functions/mic.js');
+                micProcess.send({ filepath, duration });
+                micProcess.on('message', ({ err, result }) => {
+                  callback(err, result);
+                });
+              },
+            ],
             async (err) => {
               if (err) console.error(`Woops, Something Went Wrong: ${err}`);
               else {
