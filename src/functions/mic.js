@@ -11,7 +11,7 @@ const mic = new Micro({
 // fire up the mic and record audio to the designated filepath.
 const startPiMic = async (filepath, duration) => {
   const audioInStream = mic.getAudioStream();
-  const fileOutStream = fs.WriteStream(`${filepath}.wav`);
+  const fileOutStream = fs.createWriteStream(`${filepath}.wav`);
   // Add event listener that starts timeout counter as soon as the
   // start() function is successfully called
   audioInStream.on('startComplete', () => {
