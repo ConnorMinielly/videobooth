@@ -80,18 +80,18 @@ cylon
                 });
               },
             ],
-            async (err) => {
+            async (err, result) => {
               if (err) console.error(`Woops, Something Went Wrong: ${err}`);
               else {
+                console.log(result);
                 console.log('Beginning Composite Process...');
                 // try to composite the video and audio into the same file.
                 try {
-                  // await ffmpeg
-                  //   .input(`${filepath}.h264`)
-                  //   .input(`${filepath}.wav`)
-                  //   .output(`${filepath}.mp4`)
-                  //   .on('end', () => console.log('Audio + Video Compositing Finished'))
-                  //   .run();
+                  await ffmpeg
+                    .input(`${filepath}.h264`)
+                    .output(`${filepath}.mp4`)
+                    .on('end', () => console.log('Audio + Video Compositing Finished'))
+                    .run();
                   // console.log('Removing Source Audio (wav) + Video (h264) Files');
                   // shell.rm(`${filepath}.h264`);
                   // shell.rm(`${filepath}.wav`);
