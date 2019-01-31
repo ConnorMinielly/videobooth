@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "sudo node src/index.js",
-    "build-raspidmx": "node src/buildScript.js",
+    "build-raspidmx": "sudo node src/buildScript.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Connor Minielly",
