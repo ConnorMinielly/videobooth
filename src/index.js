@@ -86,15 +86,15 @@ cylon
                 console.log('Beginning Composite Process...');
                 // try to composite the video and audio into the same file.
                 try {
-                  await ffmpeg
-                    .input(`${filepath}.h264`)
-                    .input(`${filepath}.wav`)
-                    .output(`${filepath}.mp4`)
-                    .on('end', () => console.log('Audio + Video Compositing Finished'))
-                    .run();
-                  console.log('Removing Source Audio (wav) + Video (h264) Files');
-                  shell.rm(`${filepath}.h264`);
-                  shell.rm(`${filepath}.wav`);
+                  // await ffmpeg
+                  //   .input(`${filepath}.h264`)
+                  //   .input(`${filepath}.wav`)
+                  //   .output(`${filepath}.mp4`)
+                  //   .on('end', () => console.log('Audio + Video Compositing Finished'))
+                  //   .run();
+                  // console.log('Removing Source Audio (wav) + Video (h264) Files');
+                  // shell.rm(`${filepath}.h264`);
+                  // shell.rm(`${filepath}.wav`);
                 } catch (error) {
                   console.log(`MERGE FAILED: ${error}`);
                 }
