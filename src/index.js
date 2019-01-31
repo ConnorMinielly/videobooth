@@ -30,13 +30,6 @@ const mic = new micro({
 // Init ffmpeg object to handle video and audio merge/conversion.
 const ffmpeg = new fffmpeg();
 
-// Add event listener that starts timeout counter as soon as the start() function is successfully called
-mic.on('startComplete', () => {
-  setTimeout(() => {
-    mic.stop();
-  }, duration);
-});
-
 // State object to track system states.
 const State = {
   onAir: false, // Are we recording?
@@ -115,6 +108,12 @@ startPiCam = (filepath, callback) => {
 startPiMic = async (filepath, callback) => {
   let audioInStream = mic.getAudioStream();
   let fileOutStream = fs.WriteStream(filepath + '.wav');
+  // Add event listener that starts timeout counter as soon as the start() function is successfully called
+  audioInStream.on('startComplete', () => {
+    setTimeout(() => {
+      mic.stop();
+    }, duration);
+  });
   audioInStream.pipe(fileOutStream);
   await mic.start();
   callback();
