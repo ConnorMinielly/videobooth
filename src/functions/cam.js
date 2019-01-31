@@ -26,6 +26,6 @@ const startPiCam = (filepath, cam) => {
     });
 };
 
-process.on('message', ({ fp, dur }) => {
-  startPiCam(fp, setupCam(dur));
+process.on('message', ({ filepath, duration }) => {
+  startPiCam(filepath, setupCam(duration));
 });

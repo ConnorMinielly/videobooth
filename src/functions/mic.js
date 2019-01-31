@@ -32,6 +32,6 @@ const startPiMic = async (filepath, duration) => {
   }
 };
 
-process.on('message', ({ fp, dur }) => {
-  startPiMic(fp, dur);
+process.on('message', ({ filepath, duration }) => {
+  startPiMic(filepath, duration);
 });

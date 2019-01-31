@@ -52,6 +52,7 @@ cylon
           const date = new Date();
           const stamp = `UseYourWords_${date.getUTCFullYear()}${date.getUTCMonth()
             + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
+
           const filepath = `${storagePath}/${stamp}/${stamp}`;
 
           console.log(`Initializing Recording Process For ${stamp}`);
