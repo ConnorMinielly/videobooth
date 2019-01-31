@@ -54,6 +54,7 @@ cylon
             + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
 
           const filepath = `${storagePath}/${stamp}/${stamp}`;
+          fs.mkdir(`${storagePath}/${stamp}`);
 
           console.log(`Initializing Recording Process For ${stamp}`);
           // if this isn't parallel enough mic and cam functions can be separated into
