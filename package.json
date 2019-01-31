@@ -22,5 +22,9 @@
     "pi-camera": "^1.2.1",
     "shelljs": "^0.8.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
 }
