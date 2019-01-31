@@ -1,6 +1,7 @@
 const Picam = require('pi-camera');
 // setup camera with recording duration.
 const setupCam = (dur) => {
+  console.log(`duration: ${dur}`);
   const cam = new Picam({
     mode: 'video',
     output: 'video.h264', // Temporary name
