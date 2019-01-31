@@ -44,11 +44,11 @@ cylon
 
     // define start button
     devices: {
-      button: { driver: 'button', pin: 2 },
+      button: { driver: 'button', pin: 3 },
     },
 
-    work: devices => {
-      devices.button.on('push', () => {
+    work: my => {
+      my.button.on('push', () => {
         if (!State.onAir) {
           State.onAir = true; // We are recording, don't try starting again.
           let date = Date.now();
