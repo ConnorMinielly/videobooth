@@ -7,12 +7,15 @@ const Setup = async () => {
   if (shell.which('git') && shell.which('make')) {
     shell.cd(__dirname);
     console.log('cloning raspidmx...');
+    if (shell.test('-e', '/raspidmx')) {
+      await shell.rm('-r', '/raspidmx');
+    }
     await shell.exec('git clone https://github.com/AndrewFromMelbourne/raspidmx.git');
     shell.cd('raspidmx');
     console.log('making raspidmx...');
     await shell.exec('sudo make');
-    console.log('exporting lib...');
-    await shell.exec('export LD_LIBRARY_PATH=$(pwd)/lib');
+    console.log('copying lib file...');
+    await shell.exec('sudo cp raspidmx/lib/libraspidmx.so.1 /usr/lib');
   } else console.error('Build requires git and make installed on system.');
 };
 

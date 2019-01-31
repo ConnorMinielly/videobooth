@@ -33,72 +33,70 @@ const renderOverlay = (callback) => {
   callback();
 };
 
-renderOverlay();
+// Spin up cylon connection to RPI to manage GPIO button triggers
+cylon
+  .robot({
+    connections: {
+      raspi: { adaptor: 'raspi' },
+    },
 
-// // Spin up cylon connection to RPI to manage GPIO button triggers
-// cylon
-//   .robot({
-//     connections: {
-//       raspi: { adaptor: 'raspi' },
-//     },
+    // define start button
+    devices: {
+      button: { driver: 'button', pin: 3 },
+    },
 
-//     // define start button
-//     devices: {
-//       button: { driver: 'button', pin: 3 },
-//     },
+    work: (my) => {
+      my.button.on('push', () => {
+        if (!State.onAir) {
+          State.onAir = true; // We are recording, don't try starting again.
+          const date = new Date();
+          const stamp = `UseYourWords_${date.getUTCFullYear()}${date.getUTCMonth()
+            + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
+          const filepath = `${storagePath}/${stamp}/${stamp}`;
 
-//     work: (my) => {
-//       my.button.on('push', () => {
-//         if (!State.onAir) {
-//           State.onAir = true; // We are recording, don't try starting again.
-//           const date = new Date();
-//           const stamp = `UseYourWords_${date.getUTCFullYear()}${date.getUTCMonth()
-//             + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
-//           const filepath = `${storagePath}/${stamp}/${stamp}`;
-
-//           console.log(`Initializing Recording Process For ${stamp}`);
-//           // if this isn't parallel enough mic and cam functions can be separated into
-//           // separate module files and forked via subprocess
-//           parallel(
-//             [
-//               (callback) => {
-//                 renderOverlay(callback);
-//               },
-//               (callback) => {
-//                 const camProcess = fork('functions/cam.js');
-//                 camProcess.send({ filepath, duration });
-//                 camProcess.on('message', ({ err, result }) => {
-//                   callback(err, result);
-//                 });
-//               },
-//               (callback) => {
-//                 const micProcess = fork('functions/mic.js');
-//                 micProcess.send({ filepath, duration });
-//                 micProcess.on('message', ({ err, result }) => {
-//                   callback(err, result);
-//                 });
-//               },
-//             ],
-//             async (err) => {
-//               if (err) console.error(`Woops, Something Went Wrong: ${err}`);
-//               else {
-//                 console.log('Beginning Composite Process...');
-//                 // try to composite the video and audio into the same file.
-//                 await ffmpeg
-//                   .input(`${filepath}.h264`)
-//                   .input(`${filepath}.wav`)
-//                   .output(`${filepath}mp4`)
-//                   .on('end', () => console.log('Audio + Video Compositing Finished'))
-//                   .run();
-//                 console.log('Removing Source Audio (wav) + Video (h264) Files');
-//                 fs.unlink(`${filepath}.h264`);
-//                 fs.unlink(`${filepath}.wav`);
-//               }
-//               State.onAir = false; // We're all done recording, for better or worse.
-//             },
-//           );
-//         }
-//       });
-//     },
-//   })
-//   .start();
+          console.log(`Initializing Recording Process For ${stamp}`);
+          // if this isn't parallel enough mic and cam functions can be separated into
+          // separate module files and forked via subprocess
+          parallel(
+            [
+              (callback) => {
+                renderOverlay(callback);
+              },
+              (callback) => {
+                const camProcess = fork('functions/cam.js');
+                camProcess.send({ filepath, duration });
+                camProcess.on('message', ({ err, result }) => {
+                  callback(err, result);
+                });
+              },
+              (callback) => {
+                const micProcess = fork('functions/mic.js');
+                micProcess.send({ filepath, duration });
+                micProcess.on('message', ({ err, result }) => {
+                  callback(err, result);
+                });
+              },
+            ],
+            async (err) => {
+              if (err) console.error(`Woops, Something Went Wrong: ${err}`);
+              else {
+                console.log('Beginning Composite Process...');
+                // try to composite the video and audio into the same file.
+                await ffmpeg
+                  .input(`${filepath}.h264`)
+                  .input(`${filepath}.wav`)
+                  .output(`${filepath}mp4`)
+                  .on('end', () => console.log('Audio + Video Compositing Finished'))
+                  .run();
+                console.log('Removing Source Audio (wav) + Video (h264) Files');
+                fs.unlink(`${filepath}.h264`);
+                fs.unlink(`${filepath}.wav`);
+              }
+              State.onAir = false; // We're all done recording, for better or worse.
+            },
+          );
+        }
+      });
+    },
+  })
+  .start();
