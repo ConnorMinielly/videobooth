@@ -3,7 +3,7 @@ const shell = require('shelljs');
 const parallel = require('run-parallel');
 const Fffmpeg = require('fluent-ffmpeg');
 const { fork } = require('child_process');
-const fs = require('fs');
+// const fs = require('fs');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
@@ -54,7 +54,7 @@ cylon
             + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
 
           const filepath = `${storagePath}/${stamp}/${stamp}`;
-          fs.mkdir(`${storagePath}/${stamp}`);
+          shell.mkdir(`${storagePath}/${stamp}`);
 
           console.log(`Initializing Recording Process For ${stamp}`);
           // if this isn't parallel enough mic and cam functions can be separated into
@@ -93,8 +93,8 @@ cylon
                     .on('end', () => console.log('Audio + Video Compositing Finished'))
                     .run();
                   console.log('Removing Source Audio (wav) + Video (h264) Files');
-                  fs.unlink(`${filepath}.h264`);
-                  fs.unlink(`${filepath}.wav`);
+                  shell.rm(`${filepath}.h264`);
+                  shell.rm(`${filepath}.wav`);
                 } catch (error) {
                   console.log(`MERGE FAILED: ${error}`);
                 }
