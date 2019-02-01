@@ -1,35 +1,18 @@
-const Micro = require('mic');
-const fs = require('fs');
-// Init mic object for recording audio
-const mic = new Micro({
-  rate: '1600',
-  channels: '1',
-  device: 'hw:1,0',
-  filetype: 'wav',
-});
+const shell = require('shelljs');
 
 // fire up the mic and record audio to the designated filepath.
 const startPiMic = async (filepath, duration) => {
-  const audioInStream = mic.getAudioStream();
-  const fileOutStream = fs.WriteStream(`${filepath}.wav`);
-  // Add event listener that starts timeout counter as soon as the
-  // start() function is successfully called
-  audioInStream.on('startComplete', () => {
-    setTimeout(() => {
-      mic.stop();
-    }, duration);
-  });
-
-  audioInStream.on('stopComplete', () => {
-    process.send({ err: null, result: 'Audio: SUCCEEDED' });
-  });
-  audioInStream.pipe(fileOutStream);
-
-  try {
-    await mic.start();
-  } catch (err) {
-    process.send({ err, result: 'Audio: FAILED' });
-  }
+  // going back to the arecord direct command call
+  shell.exec(
+    `arecord --device=hw:1,0 -f dat -c1 -d ${duration / 1000} ${filepath}.wav`,
+    (code, stdout, stderr) => {
+      if (stderr) {
+        process.send({ err: stderr, result: 'Audio: FAILED' });
+      } else {
+        process.send({ err: null, result: 'Audio: Succeeded' });
+      }
+    },
+  );
 };
 
 process.on('message', ({ filepath, duration }) => {
