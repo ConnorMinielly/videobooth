@@ -42,7 +42,7 @@ cylon
     },
 
     work: (my) => {
-      shell.exec('python3 ./preview.py', {
+      shell.exec('sudo python3 ./preview.py', {
         async: true,
       });
 
