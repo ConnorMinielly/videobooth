@@ -19,7 +19,7 @@ const startPiCam = async (filepath, duration) => {
   shell.exec(
     `sudo raspivid -o ${filepath}.h264 -t ${duration} -f -w 1920 -h 1080 -fps 24`,
     (code, stdout, stderr) => {
-      console.log(`EXIT CODE: ${code} - STDOUT: ${stdout}`);
+      console.log(`EXIT CODE: ${code} - STDOUT: ${stdout} - STDERR: ${stderr}`);
       if (stderr) {
         process.send({ err: stderr, result: 'Video: FAILED' });
       } else {

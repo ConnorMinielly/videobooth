@@ -3,10 +3,10 @@ const shell = require('shelljs');
 const parallel = require('run-parallel');
 const ffmpeg = require('fluent-ffmpeg');
 const { fork } = require('child_process');
-// const fs = require('fs');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
+shell.cd(__dirname);
 
 // State object to track system states.
 const State = {
@@ -15,7 +15,6 @@ const State = {
 
 // render a png over the preview
 const renderOverlay = (callback) => {
-  shell.cd(__dirname);
   shell.exec(
     `./raspidmx/pngview/pngview -b 0 -l 3 -t ${duration} -n overlay.png`,
     {},
