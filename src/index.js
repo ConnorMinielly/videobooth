@@ -34,13 +34,11 @@ cylon
   .robot({
     connections: {
       raspi: { adaptor: 'raspi' },
-      keyboard: { adaptor: 'keyboard' },
     },
 
     // define start button
     devices: {
       button: { driver: 'button', pin: 3 },
-      keyboard: { driver: 'keyboard' },
     },
 
     work: (my) => {
