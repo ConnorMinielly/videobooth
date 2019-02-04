@@ -67,7 +67,7 @@ cylon
                 });
               },
               (callback) => {
-                const micProcess = fork('./src/functions/cam.js');
+                const micProcess = fork('./src/functions/mic.js');
                 console.log('Forked Mic');
                 micProcess.send({ filepath, duration });
                 micProcess.on('message', ({ err, result }) => {
