@@ -2,11 +2,15 @@ const cylon = require('cylon');
 const shell = require('shelljs');
 const parallel = require('run-parallel');
 const ffmpeg = require('fluent-ffmpeg');
-const { fork } = require('child_process');
+const { fork, spawn } = require('child_process');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
 shell.cd(__dirname);
+spawn('python3', ['./preview.py'], {
+  detached: true,
+  stdio: 'ignore',
+});
 
 // State object to track system states.
 const State = {
@@ -34,11 +38,13 @@ cylon
   .robot({
     connections: {
       raspi: { adaptor: 'raspi' },
+      keyboard: { adaptor: 'keyboard' },
     },
 
     // define start button
     devices: {
       button: { driver: 'button', pin: 3 },
+      keyboard: { driver: 'keyboard' },
     },
 
     work: (my) => {
@@ -87,11 +93,13 @@ cylon
                 // try to composite the video and audio into the same file.
                 try {
                   await ffmpeg(`${filepath}.h264`)
-                    .addInput(`${filepath}.wav`)
                     .on('error', (ffmpegError) => {
                       console.log(`Audio + Video Compositing Failed: ${ffmpegError.message}`);
                     })
                     .on('end', () => console.log('Audio + Video Compositing Finished'))
+                    .on('progress', (progress) => {
+                      console.log(`Processing: ${progress.percent}% done`);
+                    })
                     .save(`${filepath}.mp4`);
                 } catch (error) {
                   console.log(`MERGE FAILED: ${error}`);
@@ -100,6 +108,13 @@ cylon
               State.onAir = false; // We're all done recording, for better or worse.
             },
           );
+        }
+      });
+
+      my.keyboard.on('end', async () => {
+        if (!State.onAir) {
+          await shell.exec('sudo pkill python', { async: true });
+          process.kill();
         }
       });
     },
