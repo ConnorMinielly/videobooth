@@ -2,7 +2,7 @@ const cylon = require('cylon');
 const shell = require('shelljs');
 const parallel = require('run-parallel');
 const ffmpeg = require('fluent-ffmpeg');
-const { fork, spawn } = require('child_process');
+const { fork } = require('child_process');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
@@ -44,9 +44,8 @@ cylon
     },
 
     work: (my) => {
-      spawn('python3', ['./preview.py'], {
-        detached: true,
-        stdio: 'ignore',
+      shell.exec('python3 ./preview.py', {
+        async: true,
       });
 
       my.button.on('push', () => {
@@ -109,14 +108,6 @@ cylon
               State.onAir = false; // We're all done recording, for better or worse.
             },
           );
-        }
-      });
-
-      my.keyboard.on('end', async () => {
-        console.log('End was pressed');
-        if (!State.onAir) {
-          await shell.exec('sudo pkill python', { async: true });
-          process.kill();
         }
       });
     },
