@@ -14,6 +14,7 @@
     "cylon": "^1.3.0",
     "cylon-gpio": "^0.30.1",
     "cylon-i2c": "^0.26.1",
+    "cylon-keyboard": "^0.17.0",
     "cylon-raspi": "^0.20.1",
     "drivelist": "^7.0.1",
     "fluent-ffmpeg": "^2.1.2",
