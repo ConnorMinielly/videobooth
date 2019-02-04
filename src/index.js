@@ -7,10 +7,6 @@ const { fork, spawn } = require('child_process');
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
 shell.cd(__dirname);
-spawn('python3', ['./preview.py'], {
-  detached: true,
-  stdio: 'ignore',
-});
 
 // State object to track system states.
 const State = {
@@ -48,6 +44,11 @@ cylon
     },
 
     work: (my) => {
+      spawn('python3', ['./preview.py'], {
+        detached: true,
+        stdio: 'ignore',
+      });
+
       my.button.on('push', () => {
         if (!State.onAir) {
           State.onAir = true; // We are recording, don't try starting again.
@@ -98,7 +99,7 @@ cylon
                     })
                     .on('end', () => console.log('Audio + Video Compositing Finished'))
                     .on('progress', (progress) => {
-                      console.log(`Processing: ${progress.percent}% done`);
+                      console.log(`Processing: ${progress}% done`);
                     })
                     .save(`${filepath}.mp4`);
                 } catch (error) {
@@ -112,6 +113,7 @@ cylon
       });
 
       my.keyboard.on('end', async () => {
+        console.log('End was pressed');
         if (!State.onAir) {
           await shell.exec('sudo pkill python', { async: true });
           process.kill();
