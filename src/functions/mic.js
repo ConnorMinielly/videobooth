@@ -9,7 +9,7 @@ const startPiMic = async (filepath, duration) => {
       if (stderr) {
         process.send({ err: stderr, result: 'Audio: FAILED' });
       } else {
-        process.send({ err: null, result: 'Audio: Succeeded' });
+        process.send({ err: null, result: 'Audio: SUCCEEDED' });
       }
     },
   );

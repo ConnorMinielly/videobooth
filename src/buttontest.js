@@ -11,7 +11,6 @@ cylon
     devices: {
       button: { driver: 'button', pin: 3 },
     },
-
     work: (my) => {
       my.button.on('push', () => {
         console.log('Button pushed');

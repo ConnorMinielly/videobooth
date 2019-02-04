@@ -1,15 +1,12 @@
 const cylon = require('cylon');
 const shell = require('shelljs');
 const parallel = require('run-parallel');
-const Fffmpeg = require('fluent-ffmpeg');
+const ffmpeg = require('fluent-ffmpeg');
 const { fork } = require('child_process');
 // const fs = require('fs');
 
 const duration = 20000; // 20 seconds?
 const storagePath = __dirname; // find path to USB somehow
-
-// Init ffmpeg object to handle video and audio merge/conversion.
-const ffmpeg = new Fffmpeg();
 
 // State object to track system states.
 const State = {
@@ -62,11 +59,7 @@ cylon
           parallel(
             [
               (callback) => {
-                renderOverlay(callback);
-              },
-              (callback) => {
                 const camProcess = fork('functions/cam.js');
-                console.log(`PASSING CAM FILE PATH OF: ${filepath}`);
                 camProcess.send({ filepath, duration });
                 camProcess.on('message', ({ err, result }) => {
                   callback(err, result);
@@ -79,6 +72,9 @@ cylon
                   callback(err, result);
                 });
               },
+              (callback) => {
+                renderOverlay(callback);
+              },
             ],
             async (err, result) => {
               if (err) console.error(`Woops, Something Went Wrong: ${err}`);
@@ -87,14 +83,13 @@ cylon
                 console.log('Beginning Composite Process...');
                 // try to composite the video and audio into the same file.
                 try {
-                  await ffmpeg
-                    .input(`${filepath}.h264`)
-                    .output(`${filepath}.mp4`)
+                  await ffmpeg(`${filepath}.h264`)
+                    .addInput(`${filepath}.wav`)
+                    .on('error', (ffmpegError) => {
+                      console.log(`Audio + Video Compositing Failed: ${ffmpegError.message}`);
+                    })
                     .on('end', () => console.log('Audio + Video Compositing Finished'))
-                    .run();
-                  // console.log('Removing Source Audio (wav) + Video (h264) Files');
-                  // shell.rm(`${filepath}.h264`);
-                  // shell.rm(`${filepath}.wav`);
+                    .save(`${filepath}.mp4`);
                 } catch (error) {
                   console.log(`MERGE FAILED: ${error}`);
                 }
