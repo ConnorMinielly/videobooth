@@ -29,5 +29,6 @@ const startPiCam = (filepath, duration) => {
 };
 
 process.on('message', ({ filepath, duration }) => {
+  console.log('Trying Cam Start');
   startPiCam(filepath, duration);
 });

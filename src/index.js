@@ -59,14 +59,14 @@ cylon
           parallel(
             [
               (callback) => {
-                const camProcess = fork('./src/functions/cam.js');
+                const camProcess = fork('./functions/cam.js');
                 camProcess.send({ filepath, duration });
                 camProcess.on('message', ({ err, result }) => {
                   callback(err, result);
                 });
               },
               (callback) => {
-                const micProcess = fork('./src/functions/cam.js');
+                const micProcess = fork('./functions/cam.js');
                 micProcess.send({ filepath, duration });
                 micProcess.on('message', ({ err, result }) => {
                   callback(err, result);
