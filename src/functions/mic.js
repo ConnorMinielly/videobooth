@@ -15,6 +15,6 @@ const startPiMic = async (filepath, duration) => {
   );
 };
 
-process.on('message', ({ filepath, duration }) => {
-  startPiMic(filepath, duration);
+process.on('message', async ({ filepath, duration }) => {
+  await startPiMic(filepath, duration);
 });
