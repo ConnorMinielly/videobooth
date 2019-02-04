@@ -6,6 +6,11 @@ const startPiMic = async (filepath, duration) => {
   shell.exec(
     `sudo arecord --device=hw:1,0 -f dat -c1 -d ${duration / 1000} ${filepath}.wav`,
     (code, stdout, stderr) => {
+      console.log(`
+      CODE: ${code}
+      STDOUT: ${stdout}
+      STDERR: ${stderr}
+      `);
       if (stderr) {
         process.send({ err: stderr, result: 'Audio: FAILED' });
       } else {
