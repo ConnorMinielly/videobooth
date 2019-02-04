@@ -17,7 +17,7 @@ const shell = require('shelljs');
 // fire up the PiCamera and record video to the designated filepath.
 const startPiCam = (filepath, duration) => {
   shell.exec(
-    `raspivid -o ${filepath}.h264 -t ${duration} -f -w 1920 -h 1080 -fps 24`,
+    `sudo raspivid -o ${filepath}.h264 -t ${duration} -f -w 1920 -h 1080 -fps 24`,
     (code, stdout, stderr) => {
       if (stderr) {
         process.send({ err: stderr, result: 'Video: FAILED' });
