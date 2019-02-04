@@ -11,7 +11,7 @@ const startPiMic = async (filepath, duration) => {
       STDOUT: ${stdout}
       STDERR: ${stderr}
       `);
-      if (stderr) {
+      if (code !== 0) {
         process.send({ err: stderr, result: 'Audio: FAILED' });
       } else {
         process.send({ err: null, result: 'Audio: SUCCEEDED' });
